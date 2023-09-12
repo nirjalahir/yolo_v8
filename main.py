@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-from ultralytics.yolo.v8.detect.pridict import DetectionPredector
+from ultralytics.yolo.v8.pridict import DetectionPredector
 import cv2
 
 # Load a model
