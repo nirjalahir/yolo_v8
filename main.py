@@ -1,9 +1,8 @@
 from ultralytics import YOLO
-from ultralytics.yolo.v8.pridict import DetectionPredector
+from ultralytics.models.yolo.detect.predict import DetectionPredictor
 import cv2
 
-# Load a model
-model = YOLO("yolov8n.yaml")  # build a new model from scratch
+model = YOLO(r"C:\Users\HP\PycharmProjects\yolo_v8\runs\detect\train\weights\best.pt")
+result = model.predict(source="0", show=True)
+print(result)
 
-# Use the model
-results = model.train(data="config.yaml", epochs=3)  # train the model
