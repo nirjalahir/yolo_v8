@@ -1,52 +1,126 @@
+# '''code link:https://www.freecodecamp.org/news/how-to-detect-objects-in-images-using-yolov8/'''
+#
+#
+# from ultralytics import YOLO
+#
+# #we have gave path of best.pt weights of our model:::
+# model = YOLO(r'C:\Users\HP\PycharmProjects\yolo_v8\runs\detect\train\weights\best.pt')
+#
+# #give the source
+# results = model.predict(source=r"C:\Users\HP\PycharmProjects\yolo_v8\Data\images\train\agri_0_9486.jpeg")
+# result= results[0]
+#
+#
+#
+# len(result.boxes)
+#
+# ''''The result contains detected objects and convenient properties to work with them.
+# The most important one is the boxes array with information about detected bounding boxes on the image.
+# You can determine how many objects it detected by running the len function:'''
+# box= result.boxes
+#
+# print("objective type:", box.cls[0])   # the ID of object type
+# print("coordinates:", box.xyxy[0])     #the coordinates of the box as an array [x1,y1,x2,y2]
+# print("probability:",box.conf[0])      #the confidence level of the model about this object. If it's very low, like < 0.5, then you can just ignore the box.
+#
+#
+# #additional for understanding:
+#
+# cords = box.xyxy[0].tolist()
+# conf = box.conf[0].item()
+# class_id = result.names[box.cls[0].item()]
+# print("Object type:", class_id)
+# print("Coordinates:", cords)
+# print("Probability:", conf)
+
+
+
+
+from ultralytics import YOLO
 import cv2
-import torch
-from torch.hub import download_url_to_file
-from models.experimental import attempt_load
-from utils.datasets import LoadStreams, LoadImages
-from utils.general import check_img_size, non_max_suppression, scale_coords
-from utils.plots import plot_one_box
-from utils.torch_utils import select_device, time_synchronized
 
-# Define the paths to the YOLOv5 model and the video source (0 for webcam)
-weights_path = 'best.pt'
-video_source = 0  # 0 for webcam
+# Load the YOLOv8 model with the best weights
+model = YOLO(r'C:\Users\HP\PycharmProjects\yolo_v8\runs\detect\train\weights\best.pt')
 
-# Initialize YOLOv5 model
-device = select_device('')
-model = attempt_load(weights_path, map_location=device)
-stride = int(model.stride.max())  # Assume all scales have same stride
-imgsz = check_img_size(640, s=stride)
-if not model.names:
-    model.names = ['class'] * model.nc  # Replace with your class names
-
-# Initialize webcam or video source
-vid = cv2.VideoCapture(video_source)
+# Open a connection to your webcam (usually 0 or 1 for built-in webcam)
+cap = cv2.VideoCapture(0)
 
 while True:
-    ret, img0 = vid.read()  # Read a frame from the webcam or video source
+    # Read a frame from the webcam
+    ret, frame = cap.read()
 
     if not ret:
         break
 
-    img = torch.from_numpy(img0).to(device)
-    img = img.float() / 255.0
-    if img.ndimension() == 3:
-        img = img.unsqueeze(0)
+    # Perform object detection on the frame
+    results = model.predict(source=frame)
 
-    # Inference
-    pred = model(img, augment=True)[0]
+    # Get the first result
+    result = results[0]
 
-    # NMS and post-processing
-    pred = non_max_suppression(pred, 0.25, 0.45, classes=None, agnostic=False)
-    for det in pred[0]:
-        p, s, im0 = scale_coords(img.shape[2:], det[:4], img0.shape[:2])
-        plot_one_box(p, im0, label=f'{model.names[int(det[-1])]} {det[4]:.2f}', color=(0, 255, 0), line_thickness=3)
+    # Check if any objects were detected
+    if len(result.boxes) > 0:
+        # Extract information about the first detected object
+        box = result.boxes[0]
+        cords = box.xyxy[0].tolist()
+        conf = box.conf[0].item()
+        class_id = result.names[box.cls[0].item()]
 
-    # Display the resulting frame
-    cv2.imshow('YOLOv5 Real-Time Object Detection', im0)
+        print("Object type:", class_id)
+        print("Coordinates:", cords)
+        print("Probability:", conf)
 
-    if cv2.waitKey(1) == ord('q'):
+    # Display the frame with bounding boxes
+    # result.show()
+
+    # Exit the loop when the 'q' key is pressed
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-vid.release()
+# Release the webcam and close all OpenCV windows
+cap.release()
+cv2.destroyAllWindows()
+from ultralytics import YOLO
+import cv2
+
+# Load your YOLO model
+model = YOLO(r'C:\Users\HP\PycharmProjects\yolo_v8\runs\detect\train\weights\best.pt')
+
+# Open a connection to your webcam (usually webcam index 0, but it may vary)
+cap = cv2.VideoCapture(0)
+
+while True:
+    # Read a frame from the webcam
+    ret, frame = cap.read()
+
+    # Make sure the frame was read successfully
+    if not ret:
+        break
+
+    # Perform object detection on the frame
+    results = model.predict(source=frame)
+
+    # Get the first result (assuming there's only one frame)
+    result = results[0]
+
+    # Loop through detected objects
+    for box in result.boxes:
+        class_id = result.names[box.cls[0].item()]
+        cords = box.xyxy[0].tolist()
+        cords = [round(x) for x in cords]
+        conf = round(box.conf[0].item(), 2)
+        print("Object type:", class_id)
+        print("Coordinates:", cords)
+        print("Probability:", conf)
+        print("---")
+
+    # Display the frame with bounding boxes (you can customize this part)
+    # result.show()
+
+    # Press 'q' to exit the loop
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the webcam and close any OpenCV windows
+cap.release()
 cv2.destroyAllWindows()
