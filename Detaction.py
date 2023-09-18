@@ -98,7 +98,7 @@ while True:
         break
 
     # Perform object detection on the frame
-    results = model.predict(source=frame)
+    results = model.predict(source=frame  )
 
     # Get the first result (assuming there's only one frame)
     result = results[0]
@@ -115,8 +115,8 @@ while True:
         print("---")
 
     # Display the frame with bounding boxes (you can customize this part)
-    # result.show()
-
+    result.show()
+# 202103103520
     # Press 'q' to exit the loop
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
