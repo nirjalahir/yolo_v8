@@ -35,51 +35,51 @@
 
 
 
-
-from ultralytics import YOLO
-import cv2
-
-# Load the YOLOv8 model with the best weights
-model = YOLO(r'C:\Users\HP\PycharmProjects\yolo_v8\runs\detect\train\weights\best.pt')
-
-# Open a connection to your webcam (usually 0 or 1 for built-in webcam)
-cap = cv2.VideoCapture(0)
-
-while True:
-    # Read a frame from the webcam
-    ret, frame = cap.read()
-
-    if not ret:
-        break
-
-    # Perform object detection on the frame
-    results = model.predict(source=frame)
-
-    # Get the first result
-    result = results[0]
-
-    # Check if any objects were detected
-    if len(result.boxes) > 0:
-        # Extract information about the first detected object
-        box = result.boxes[0]
-        cords = box.xyxy[0].tolist()
-        conf = box.conf[0].item()
-        class_id = result.names[box.cls[0].item()]
-
-        print("Object type:", class_id)
-        print("Coordinates:", cords)
-        print("Probability:", conf)
-
-    # Display the frame with bounding boxes
-    # result.show()
-
-    # Exit the loop when the 'q' key is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release the webcam and close all OpenCV windows
-cap.release()
-cv2.destroyAllWindows()
+#
+# from ultralytics import YOLO
+# import cv2
+#
+# # Load the YOLOv8 model with the best weights
+# model = YOLO(r'C:\Users\HP\PycharmProjects\yolo_v8\runs\detect\train\weights\best.pt')
+#
+# # Open a connection to your webcam (usually 0 or 1 for built-in webcam)
+# cap = cv2.VideoCapture(0)
+#
+# while True:
+#     # Read a frame from the webcam
+#     ret, frame = cap.read()
+#
+#     if not ret:
+#         break
+#
+#     # Perform object detection on the frame
+#     results = model.predict(source=frame)
+#
+#     # Get the first result
+#     result = results[0]
+#
+#     # Check if any objects were detected
+#     if len(result.boxes) > 0:
+#         # Extract information about the first detected object
+#         box = result.boxes[0]
+#         cords = box.xyxy[0].tolist()
+#         conf = box.conf[0].item()
+#         class_id = result.names[box.cls[0].item()]
+#
+#         print("Object type:", class_id)
+#         print("Coordinates:", cords)
+#         print("Probability:", conf)
+#
+#     # Display the frame with bounding boxes
+#     # result.show()
+#
+#     # Exit the loop when the 'q' key is pressed
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+#
+# # Release the webcam and close all OpenCV windows
+# cap.release()
+# cv2.destroyAllWindows()
 from ultralytics import YOLO
 import cv2
 
@@ -115,7 +115,7 @@ while True:
         print("---")
 
     # Display the frame with bounding boxes (you can customize this part)
-    result.show()
+    # result.show()
 # 202103103520
     # Press 'q' to exit the loop
     if cv2.waitKey(1) & 0xFF == ord('q'):
